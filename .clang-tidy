@@ -91,19 +91,19 @@ CheckOptions:
   #   const l_some_const = ...;
   # }
   readability-identifier-naming.ConstantCase: lower_case
-  readability-identifier-naming.ConstantPrefix: "l_"
+  readability-identifier-naming.ConstantPrefix: "c_"
   readability-identifier-naming.ConstantSuffix: ""
   readability-identifier-naming.LocalConstantCase: lower_case
-  readability-identifier-naming.LocalConstantPrefix: "l_"
+  readability-identifier-naming.LocalConstantPrefix: "c_"
   readability-identifier-naming.LocalConstantSuffix: ""
   readability-identifier-naming.LocalConstantPointerCase: lower_case
-  readability-identifier-naming.LocalConstantPointerPrefix: "l_"
+  readability-identifier-naming.LocalConstantPointerPrefix: "c_"
   readability-identifier-naming.LocalConstantPointerSuffix: ""
   readability-identifier-naming.GlobalConstantCase: lower_case
-  readability-identifier-naming.GlobalConstantPrefix: "g_"
+  readability-identifier-naming.GlobalConstantPrefix: "c_"
   readability-identifier-naming.GlobalConstantSuffix: ""
   readability-identifier-naming.GlobalConstantPointerCase: lower_case
-  readability-identifier-naming.GlobalConstantPointerPreix: "g_"
+  readability-identifier-naming.GlobalConstantPointerPreix: "c_"
   readability-identifier-naming.GlobalConstantPointerSuffix: ""
   readability-identifier-naming.StaticConstantCase: lower_case
   readability-identifier-naming.StaticConstantPrefix: "c_"
