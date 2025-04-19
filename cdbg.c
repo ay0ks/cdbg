@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <signal.h>
+#include <string.h>
 
 #if defined(_WIN32) || defined(_WIN64)
 #  define WIN32_LEAN_AND_MEAN
