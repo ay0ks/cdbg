@@ -4,5 +4,5 @@
  * Breakpoints for complex debugging alongside your favorite debugging tool.
 
 ### Reference:
- * Assert: `assert`, `assert_equal`
+ * Assert: `assert`, `assert_soft`
  * Breakpoint: `breakpoint_set`, `breakpoint_trigger`, `breakpoint_clear`
