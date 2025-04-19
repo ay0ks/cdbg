@@ -1,0 +1,136 @@
+WarningsAsErrors: true
+Checks:
+  - modernize-*
+  - bugprone-*
+  - readability-*
+CheckOptions:
+  readability-identifier-naming.AggressiveDependentMemberLookup: true
+
+  # type
+  # typedef ... some_type_t;
+  readability-identifier-naming.TypedefCase: lower_case
+  readability-identifier-naming.TypedefPrefix: ""
+  readability-identifier-naming.TypedefSuffix: "_t"
+
+  # struct
+  # struct some_struct_s;
+  # typedef struct some_struct_s { ... } some_struct_t;
+  readability-identifier-naming.StructCase: lower_case
+  readability-identifier-naming.StructPrefix: ""
+  readability-identifier-naming.StructSuffix: "_s"
+  # struct some_struct_s {
+  #   some_type_t m_member;
+  # };
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.MemberPrefix: "m_"
+  readability-identifier-naming.MemberSuffix: ""
+  readability-identifier-naming.ConstantMemberCase: lower_case
+  readability-identifier-naming.ConstantMemberPrefix: "m_"
+  readability-identifier-naming.ConstantMemberSuffix: ""
+
+  # enum
+  # enum some_enum_e { ... };
+  # typedef enum some_enum_e { ... } some_enum_t;
+  # enum class some_enum_e { ... };
+  readability-identifier-naming.EnumCase: lower_case
+  readability-identifier-naming.EnumPrefix: ""
+  readability-identifier-naming.EnumSuffix: "_e"
+  # enum some_enum_e {
+  #   k_VARIANT1
+  # };
+  readability-identifier-naming.EnumConstantCase: UPPER_CASE
+  readability-identifier-naming.EnumConstantPrefix: "k_"
+  readability-identifier-naming.EnumConstantSuffix: ""
+  # enum class some_enum_e {
+  #   k_VARIANT1
+  # };
+  readability-identifier-naming.ScopedEnumConstantCase: UPPER_CASE
+  readability-identifier-naming.ScopedEnumConstantPrefix: "k_"
+  readability-identifier-naming.ScopedEnumConstantSuffix: ""
+
+  # union
+  # union some_union_u;
+  # typedef union some_union_u { ... } some_union_t;
+  readability-identifier-naming.UnionCase: lower_case
+  readability-identifier-naming.UnionPrefix: ""
+  readability-identifier-naming.UnionSuffix: "_u"
+
+  # function
+  # some_type_t some_function();
+  readability-identifier-naming.FunctionCase: lower_case
+  readability-identifier-naming.FunctionPrefix: ""
+  readability-identifier-naming.FunctionSuffix: ""
+  readability-identifier-naming.GlobalFunctionCase: lower_case
+  readability-identifier-naming.GlobalFunctionPrefix: ""
+  readability-identifier-naming.GlobalFunctionSuffix: ""
+  # some_type_t some_function(
+  #   some_type_t a_param1,
+  #   some_type_t const a_const_param2,
+  #   some_type_t *a_ptr_param3,
+  #   some_type_t const *a_const_ptr_param4,
+  #   _params_t... a_params_pack5
+  # );
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.ParameterPrefix: "a_"
+  readability-identifier-naming.ParameterSuffix: ""
+  readability-identifier-naming.ParameterPackCase: lower_case
+  readability-identifier-naming.ParameterPackPrefix: "a_"
+  readability-identifier-naming.ParameterPackSuffix: ""
+  readability-identifier-naming.PointerParameterCase: lower_case
+  readability-identifier-naming.PointerParameterPrefix: "a_"
+  readability-identifier-naming.PointerParameterSuffix: ""
+  readability-identifier-naming.ConstantParameterCase: lower_case
+  readability-identifier-naming.ConstantParameterPrefix: "a_"
+  readability-identifier-naming.ConstantParameterSuffix: ""
+  readability-identifier-naming.ConstantPointerParameterCase: lower_case
+  readability-identifier-naming.ConstantPointerParameterPrefix: "a_"
+  readability-identifier-naming.ConstantPointerParameterSuffix: ""
+
+  # constant
+  # some_type_t some_function() {
+  #   const l_some_const = ...;
+  # }
+  readability-identifier-naming.ConstantCase: lower_case
+  readability-identifier-naming.ConstantPrefix: "l_"
+  readability-identifier-naming.ConstantSuffix: ""
+  readability-identifier-naming.LocalConstantCase: lower_case
+  readability-identifier-naming.LocalConstantPrefix: "l_"
+  readability-identifier-naming.LocalConstantSuffix: ""
+  readability-identifier-naming.LocalConstantPointerCase: lower_case
+  readability-identifier-naming.LocalConstantPointerPrefix: "l_"
+  readability-identifier-naming.LocalConstantPointerSuffix: ""
+  readability-identifier-naming.GlobalConstantCase: lower_case
+  readability-identifier-naming.GlobalConstantPrefix: "g_"
+  readability-identifier-naming.GlobalConstantSuffix: ""
+  readability-identifier-naming.GlobalConstantPointerCase: lower_case
+  readability-identifier-naming.GlobalConstantPointerPreix: "g_"
+  readability-identifier-naming.GlobalConstantPointerSuffix: ""
+  readability-identifier-naming.StaticConstantCase: lower_case
+  readability-identifier-naming.StaticConstantPrefix: "c_"
+  readability-identifier-naming.StaticConstantSuffix: ""
+
+  # variable
+  readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-naming.VariablePrefix: "l_"
+  readability-identifier-naming.VariableSuffix: ""
+  readability-identifier-naming.LocalVariableCase: lower_case
+  readability-identifier-naming.LocalVariablePrefix: "l_"
+  readability-identifier-naming.LocalVariableSuffix: ""
+  readability-identifier-naming.LocalPointerCase: lower_case
+  readability-identifier-naming.LocalPointerPrefix: "l_"
+  readability-identifier-naming.LocalPointerSuffix: ""
+  readability-identifier-naming.GlobalVariableCase: lower_case
+  readability-identifier-naming.GlobalVariablePrefix: "g_"
+  readability-identifier-naming.GlobalVariableSuffix: ""
+  readability-identifier-naming.GlobalPointerCase: lower_case
+  readability-identifier-naming.GlobalPointerPrefix: "g_"
+  readability-identifier-naming.GlobalPointerSuffix: ""
+  readability-identifier-naming.StaticVariableCase: lower_case
+  readability-identifier-naming.StaticVariablePrefix: "l_"
+  readability-identifier-naming.StaticVariableSuffix: ""
+
+  # macro
+  # #define some_macro ...
+  readability-identifier-naming.MacroDefinitionCase: aNy_CasE
+  readability-identifier-naming.MacroDefinitionPrefix: ""
+  readability-identifier-naming.MacroDefinitionSuffix: ""
