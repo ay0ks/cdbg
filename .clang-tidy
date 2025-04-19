@@ -25,7 +25,7 @@ CheckOptions:
   readability-identifier-naming.MemberPrefix: "m_"
   readability-identifier-naming.MemberSuffix: ""
   readability-identifier-naming.ConstantMemberCase: lower_case
-  readability-identifier-naming.ConstantMemberPrefix: "mc_"
+  readability-identifier-naming.ConstantMemberPrefix: "m_"
   readability-identifier-naming.ConstantMemberSuffix: ""
 
   # enum
@@ -80,10 +80,10 @@ CheckOptions:
   readability-identifier-naming.PointerParameterPrefix: "a_"
   readability-identifier-naming.PointerParameterSuffix: ""
   readability-identifier-naming.ConstantParameterCase: lower_case
-  readability-identifier-naming.ConstantParameterPrefix: "ac_"
+  readability-identifier-naming.ConstantParameterPrefix: "a_"
   readability-identifier-naming.ConstantParameterSuffix: ""
   readability-identifier-naming.ConstantPointerParameterCase: lower_case
-  readability-identifier-naming.ConstantPointerParameterPrefix: "ac_"
+  readability-identifier-naming.ConstantPointerParameterPrefix: "a_"
   readability-identifier-naming.ConstantPointerParameterSuffix: ""
 
   # constant
@@ -94,16 +94,16 @@ CheckOptions:
   readability-identifier-naming.ConstantPrefix: "c_"
   readability-identifier-naming.ConstantSuffix: ""
   readability-identifier-naming.LocalConstantCase: lower_case
-  readability-identifier-naming.LocalConstantPrefix: "lc_"
+  readability-identifier-naming.LocalConstantPrefix: "l_"
   readability-identifier-naming.LocalConstantSuffix: ""
   readability-identifier-naming.LocalConstantPointerCase: lower_case
-  readability-identifier-naming.LocalConstantPointerPrefix: "lc_"
+  readability-identifier-naming.LocalConstantPointerPrefix: "l_"
   readability-identifier-naming.LocalConstantPointerSuffix: ""
   readability-identifier-naming.GlobalConstantCase: lower_case
-  readability-identifier-naming.GlobalConstantPrefix: "gc_"
+  readability-identifier-naming.GlobalConstantPrefix: "g_"
   readability-identifier-naming.GlobalConstantSuffix: ""
   readability-identifier-naming.GlobalConstantPointerCase: lower_case
-  readability-identifier-naming.GlobalConstantPointerPreix: "gc_"
+  readability-identifier-naming.GlobalConstantPointerPreix: "g_"
   readability-identifier-naming.GlobalConstantPointerSuffix: ""
   readability-identifier-naming.StaticConstantCase: lower_case
   readability-identifier-naming.StaticConstantPrefix: "c_"
