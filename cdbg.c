@@ -13,6 +13,12 @@
 #  include <debugapi.h>
 #endif
 
+#if defined(_WIN32) || defined(_WIN64)
+#  define cdbg_fprintf fprintf_s
+#else
+#  define cdbg_fprintf fprintf
+#endif
+
 void
 cdbg_assert(
   const char *const a_file,
@@ -25,9 +31,9 @@ cdbg_assert(
   va_list l_args;
   va_start(l_args, a_expression);
   const char *const l_message = va_arg(l_args, char *);
-  fprintf_s(stderr, "%s:%llu Assertion failed in %s", a_file, a_line, a_function, a_expression);
+  cdbg_fprintf(stderr, "%s:%llu Assertion failed in %s", a_file, a_line, a_function, a_expression);
   if(l_message != NULL) { fprintf_s(stderr, " (%s)", l_message); }
-  fprintf_s(stderr, "\n");
+  cdbg_fprintf(stderr, "\n");
   va_end(l_args);
   cdbg_abort();
 }
@@ -61,7 +67,7 @@ cdbg_breakpoint_set(
   }
   else
   {
-    fprintf_s(
+    cdbg_fprintf(
       stderr,
       "Breakpoint set in %s:%s at %llu triggered in %s:%s at %llu\n",
       a_breakpoint->m_set_site.m_file,
