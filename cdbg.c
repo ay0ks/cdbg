@@ -32,7 +32,7 @@ cdbg_assert(
   va_start(l_args, a_expression);
   const char *const l_message = va_arg(l_args, char *);
   cdbg_fprintf(stderr, "%s:%llu Assertion failed in %s", a_file, a_line, a_function, a_expression);
-  if(l_message != NULL) { fprintf_s(stderr, " (%s)", l_message); }
+  if(l_message != NULL) { cdbg_fprintf(stderr, " (%s)", l_message); }
   cdbg_fprintf(stderr, "\n");
   va_end(l_args);
   cdbg_abort();
