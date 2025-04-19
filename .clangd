@@ -1,15 +1,12 @@
 CompileFlags:
   Remove: [-W*]
   Add:
-    - --target=x86_64-pc-windows-gnu
-    - -D_UNICODE
-    - -DUNICODE
     - -xc
     - -std=gnu23
+    - -DUNICODE
     - -Wall
     - -Wextra
     - -Wshadow
-    - -Wno-varargs
   Compiler: clang
 
 Index:
