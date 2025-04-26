@@ -4,13 +4,15 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define assert($Expression, ...)                                               \
-  ((void)((!!($Expression))                                                    \
-          || (cdbg_assert(__FILE__, __func__, __LINE__, #$Expression, true, ##__VA_ARGS__), 0)))
+#define assert($Expression, ...)                                                               \
+  ((void)((!!($Expression))                                                                    \
+          || (cdbg_assert(__FILE__, __func__, __LINE__, #$Expression, true, ##__VA_ARGS__), 0) \
+  ))
 
-#define assert_soft($Expression, ...)                                          \
-  ((void)((!!($Expression))                                                    \
-          || (cdbg_assert(__FILE__, __func__, __LINE__, #$Expression, false, ##__VA_ARGS__), 0)))
+#define assert_soft($Expression, ...)                                                           \
+  ((void)((!!($Expression))                                                                     \
+          || (cdbg_assert(__FILE__, __func__, __LINE__, #$Expression, false, ##__VA_ARGS__), 0) \
+  ))
 
 void
 cdbg_assert(
@@ -30,15 +32,15 @@ typedef struct cdbg_breakpoint_s
   bool m_armed;
   struct
   {
-    const char *m_file;
-    const char *m_function;
+    const wchar_t *m_file;
+    const wchar_t *m_function;
     uint64_t m_line;
   } m_set_site;
   struct
   {
     jmp_buf m_buffer;
-    const char *m_file;
-    const char *m_function;
+    const wchar_t *m_file;
+    const wchar_t *m_function;
     uint64_t m_line;
   } m_jump_site;
 } cdbg_breakpoint_t;
@@ -62,10 +64,10 @@ cdbg_breakpoint_break(
 void
 cdbg_breakpoint_clear(cdbg_breakpoint_t *a_breakpoint);
 
-#define breakpoint_set($Breakpoint)                                            \
+#define breakpoint_set($Breakpoint)                                                      \
   (cdbg_breakpoint_set($Breakpoint, __FILE__, __func__, __LINE__))
 
-#define breakpoint_trigger($Breakpoint)                                        \
+#define breakpoint_trigger($Breakpoint)                                                  \
   (cdbg_breakpoint_break($Breakpoint, __FILE__, __func__, __LINE__))
 
 #define breakpoint_clear($Breakpoint) (cdbg_breakpoint_clear($Breakpoint))
