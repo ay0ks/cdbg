@@ -14,9 +14,9 @@
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
-#  define cdbg_fprintf fprintf_s
+#  define cdbg_fprintf fwprintf_s
 #else
-#  define cdbg_fprintf fprintf
+#  define cdbg_fprintf fwprintf
 #endif
 
 void
@@ -31,10 +31,12 @@ cdbg_assert(
 {
   va_list l_args;
   va_start(l_args, a_abort);
-  const char *const l_message = va_arg(l_args, char *);
-  cdbg_fprintf(stderr, "%s:%llu Assertion failed in %s", a_file, a_line, a_function, a_expression);
-  if(l_message != NULL) { cdbg_fprintf(stderr, " (%s)", l_message); }
-  cdbg_fprintf(stderr, "\n");
+  const wchar_t *const l_message = va_arg(l_args, wchar_t *);
+  cdbg_fprintf(
+    stderr, L"%s:%llu Assertion failed in %s", a_file, a_line, a_function, a_expression
+  );
+  if(l_message != NULL) { cdbg_fprintf(stderr, L" (%s)", l_message); }
+  cdbg_fprintf(stderr, L"\n");
   va_end(l_args);
   if(a_abort) { cdbg_abort(); }
 }
@@ -70,7 +72,7 @@ cdbg_breakpoint_set(
   {
     cdbg_fprintf(
       stderr,
-      "Breakpoint set in %s:%s at %llu triggered in %s:%s at %llu\n",
+      L"Breakpoint set in %s:%s at %llu triggered in %s:%s at %llu\n",
       a_breakpoint->m_set_site.m_file,
       a_breakpoint->m_set_site.m_function,
       a_breakpoint->m_set_site.m_line,
