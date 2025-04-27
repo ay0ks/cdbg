@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdio.h>
 #include <setjmp.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -26,6 +27,41 @@ cdbg_assert(
 
 void
 cdbg_abort();
+
+typedef struct cdbg_dump_lookaround_s
+{
+  uint8_t m_dummy;
+  uint64_t m_lookbehind;
+  uint64_t m_lookahead;
+} cdbg_dump_lookaround_t;
+
+#define dump($Value, $ValueSize, ...)                                                    \
+  ((void)({                                                                              \
+    char l_address[48];                                                                  \
+    snprintf(l_address, sizeof(l_address), "%p", $Value);                                \
+    ((void)(cdbg_dump(                                                                   \
+      __FILE__,                                                                          \
+      __func__,                                                                          \
+      __LINE__,                                                                          \
+      l_address,                                                                         \
+      (cdbg_dump_lookaround_t){0, ##__VA_ARGS__},                                        \
+      #$Value,                                                                           \
+      ($ValueSize),                                                                      \
+      (char *)($Value)                                                                   \
+    )));                                                                                 \
+  }))
+
+void
+cdbg_dump(
+  const char *a_file,
+  const char *a_function,
+  uint64_t a_line,
+  const char *a_address,
+  cdbg_dump_lookaround_t a_lookaround,
+  const char *a_value_repr,
+  uint64_t a_size,
+  const char *a_value
+);
 
 typedef struct cdbg_breakpoint_s
 {
