@@ -110,7 +110,7 @@ cdbg_dump(
     wprintf_s(L"\x1b[38;5;7m");
     if(a_lookaround.m_lookbehind > 0 || a_lookaround.m_lookahead > 0)
     {
-      if(l_j <= a_lookaround.m_lookbehind || l_j >= a_size + a_lookaround.m_lookahead)
+      if(l_j < a_lookaround.m_lookbehind || l_j > a_size + a_lookaround.m_lookahead)
       {
         wprintf_s(L"\x1b[2m\x1b[38;5;8m");
       }
