@@ -5,4 +5,5 @@
 
 ### Reference:
  * Assert: `assert`, `assert_soft`
+ * Dump: `dump`
  * Breakpoint: `breakpoint_set`, `breakpoint_trigger`, `breakpoint_clear`
