@@ -11,6 +11,16 @@
 #define cdbg_stringify($Value) __cdbg_stringify($Value)
 #define cdbg_stringify_widen($Value) __cdbg_stringify_widen($Value)
 
+#if defined(_WIN32) || defined(_WIN64)
+#  define cdbg_fprintf fwprintf_s
+#  define cdbg_sprintf snwprintf_s
+#  define cdbg_printf wprintf_s
+#else
+#  define cdbg_fprintf fwprintf
+#  define cdbg_sprintf snwprintf
+#  define cdbg_printf wprintf
+#endif
+
 #define assert($Expression, ...)                                                                                                                                    \
   ((void)((!!($Expression))                                                                                                                                         \
           || (cdbg_assert((cdbg_stringify_widen(__FILE__)), (__func__), (__LINE__), (cdbg_stringify_widen(cdbg_stringify($Expression))), true, ##__VA_ARGS__), (0)) \
@@ -41,20 +51,20 @@ typedef struct cdbg_dump_lookaround_s
   uint64_t m_lookahead;
 } cdbg_dump_lookaround_t;
 
-#define dump($Value, $ValueSize, ...)                                                    \
-  ((void)({                                                                              \
-    wchar_t l_address[48];                                                               \
-    ((void)(snwprintf(l_address, sizeof(l_address), L"%p", $Value)));                    \
-    ((void)(cdbg_dump(                                                                   \
-      (cdbg_stringify_widen(__FILE__)),                                                  \
-      (__func__),                                                                        \
-      (__LINE__),                                                                        \
-      (l_address),                                                                       \
-      (cdbg_dump_lookaround_t){0, ##__VA_ARGS__},                                        \
-      (cdbg_stringify_widen(cdbg_stringify($Value))),                                    \
-      ($ValueSize),                                                                      \
-      ((char *)($Value))                                                                 \
-    )));                                                                                 \
+#define dump($Value, $ValueSize, ...)                                          \
+  ((void)({                                                                    \
+    wchar_t l_address[48];                                                     \
+    ((void)(cdbg_sprintf(l_address, sizeof(l_address), L"%p", $Value)));       \
+    ((void)(cdbg_dump(                                                         \
+      (cdbg_stringify_widen(__FILE__)),                                        \
+      (__func__),                                                              \
+      (__LINE__),                                                              \
+      (l_address),                                                             \
+      (cdbg_dump_lookaround_t){0, ##__VA_ARGS__},                              \
+      (cdbg_stringify_widen(cdbg_stringify($Value))),                          \
+      ($ValueSize),                                                            \
+      ((char *)($Value))                                                       \
+    )));                                                                       \
   }))
 
 void
@@ -106,14 +116,10 @@ cdbg_breakpoint_break(
 void
 cdbg_breakpoint_clear(cdbg_breakpoint_t *a_breakpoint);
 
-#define breakpoint_set($Breakpoint)                                                      \
-  (cdbg_breakpoint_set(                                                                  \
-    ($Breakpoint), (cdbg_stringify_wide(__FILE__)), (__func__), (__LINE__)               \
-  ))
+#define breakpoint_set($Breakpoint)                                            \
+  (cdbg_breakpoint_set(($Breakpoint), (cdbg_stringify_wide(__FILE__)), (__func__), (__LINE__)))
 
-#define breakpoint_trigger($Breakpoint)                                                  \
-  (cdbg_breakpoint_break(                                                                \
-    ($Breakpoint), (cdbg_stringify_wide(__FILE__)), (__func__), (__LINE__)               \
-  ))
+#define breakpoint_trigger($Breakpoint)                                        \
+  (cdbg_breakpoint_break(($Breakpoint), (cdbg_stringify_wide(__FILE__)), (__func__), (__LINE__)))
 
 #define breakpoint_clear($Breakpoint) (cdbg_breakpoint_clear(($Breakpoint)))

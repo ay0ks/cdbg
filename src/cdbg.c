@@ -1,4 +1,4 @@
-#include "cdbg.h"
+#include <cdbg.h>
 
 #include <assert.h>
 #include <stdarg.h>
@@ -13,14 +13,6 @@
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
 #  include <debugapi.h>
-#endif
-
-#if defined(_WIN32) || defined(_WIN64)
-#  define cdbg_fprintf fwprintf_s
-#  define cdbg_printf wprintf_s
-#else
-#  define cdbg_fprintf fwprintf
-#  define cdbg_printf wprintf
 #endif
 
 bool g_locale_set = false;
@@ -43,9 +35,7 @@ cdbg_assert(
   mbstowcs(l_function, a_function, l_function_length);
   l_function[l_function_length] = L'\0';
   const wchar_t *const l_message = va_arg(l_args, wchar_t *);
-  cdbg_fprintf(
-    stderr, L"%s:%llu Assertion failed in %s", a_file, a_line, l_function, a_expression
-  );
+  cdbg_fprintf(stderr, L"%s:%llu Assertion failed in %s", a_file, a_line, l_function, a_expression);
   if(l_message != NULL) { cdbg_fprintf(stderr, L" (%s)", l_message); }
   cdbg_fprintf(stderr, L"\n");
   va_end(l_args);
@@ -81,10 +71,10 @@ cdbg_dump(
   mbstowcs(l_function, a_function, l_function_length);
   l_function[l_function_length] = L'\0';
   uint64_t l_address = wcstoll(a_address, NULL, 16);
+  cdbg_printf(L"%s:%llu %s: %s (at %s)\n", a_file, a_line, l_function, a_value_repr, a_address);
   cdbg_printf(
-    L"%s:%llu %s: %s (at %s)\n", a_file, a_line, l_function, a_value_repr, a_address
+    L"  offset   hex                                              ascii\n"
   );
-  cdbg_printf(L"  offset   hex                                              ascii\n");
   a_value -= a_lookaround.m_lookbehind;
   uint64_t l_size = a_size + a_lookaround.m_lookbehind + a_lookaround.m_lookahead;
   for(uint64_t l_i = 0, l_j = 0; l_i <= l_size; l_i += 16)

@@ -3,11 +3,13 @@ CompileFlags:
   Add:
     - -xc
     - -std=gnu23
+    - -I../include
     - -DUNICODE
     - -Wall
     - -Wextra
     - -Wshadow
   Compiler: clang
+  CompilationDatabase: None
 
 Index:
   StandardLibrary: Yes
