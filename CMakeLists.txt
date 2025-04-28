@@ -16,6 +16,9 @@ target_compile_definitions(cdbg PUBLIC UNICODE)
 target_compile_options(cdbg PUBLIC
   "-UNDEBUG"
   "-O2"
+  "-Wall"
+  "-Wextra"
+  "-Wshadow"
 )
 target_sources(cdbg PRIVATE ./src/cdbg.c)
 target_include_directories(cdbg PRIVATE ./include)
