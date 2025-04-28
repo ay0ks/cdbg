@@ -1,15 +1,6 @@
 CompileFlags:
   Remove: [-W*]
-  Add:
-    - -xc
-    - -std=gnu23
-    - -I../include
-    - -DUNICODE
-    - -Wall
-    - -Wextra
-    - -Wshadow
-  Compiler: clang
-  CompilationDatabase: None
+  CompilationDatabase: Ancestors
 
 Index:
   StandardLibrary: Yes
