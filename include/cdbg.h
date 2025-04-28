@@ -17,7 +17,7 @@
 #  define cdbg_printf wprintf_s
 #else
 #  define cdbg_fprintf fwprintf
-#  define cdbg_sprintf snwprintf
+#  define cdbg_sprintf swprintf
 #  define cdbg_printf wprintf
 #endif
 
