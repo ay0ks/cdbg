@@ -13,7 +13,7 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 #  define cdbg_fprintf fwprintf_s
-#  define cdbg_sprintf snwprintf_s
+#  define cdbg_sprintf _snwprintf
 #  define cdbg_printf wprintf_s
 #else
 #  define cdbg_fprintf fwprintf
