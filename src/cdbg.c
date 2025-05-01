@@ -33,7 +33,7 @@ cdbg_assert(
   uint64_t l_function_length = strlen(a_function);
   wchar_t l_function[l_function_length + 1];
   mbstate_t l_state;
-  mbsrtowcs(l_function, a_function, l_function_length, &l_state);
+  mbsrtowcs(l_function, &a_function, l_function_length, &l_state);
   l_function[l_function_length] = L'\0';
   const wchar_t *const l_message = va_arg(l_args, wchar_t *);
   cdbg_fprintf(stderr, L"%s:%llu Assertion failed in %s", a_file, a_line, l_function, a_expression);
@@ -70,7 +70,7 @@ cdbg_dump(
   uint64_t l_function_length = strlen(a_function);
   wchar_t l_function[l_function_length + 1];
   mbstate_t l_state;
-  mbsrtowcs(l_function, a_function, l_function_length, &l_state);
+  mbsrtowcs(l_function, &a_function, l_function_length, &l_state);
   l_function[l_function_length] = L'\0';
   uint64_t l_address = wcstoll(a_address, NULL, 16);
   cdbg_printf(L"%s:%llu %s: %s (at %s)\n", a_file, a_line, l_function, a_value_repr, a_address);
@@ -130,7 +130,7 @@ cdbg_breakpoint_set(
     uint64_t l_function_length = strlen(a_function);
     wchar_t l_function[l_function_length + 1];
     mbstate_t l_state;
-    mbsrtowcs(l_function, a_function, l_function_length, &l_state);
+    mbsrtowcs(l_function, &a_function, l_function_length, &l_state);
     l_function[l_function_length] = L'\0';
     a_breakpoint->m_set_site.m_file = a_file;
     a_breakpoint->m_set_site.m_function = l_function;
@@ -167,7 +167,7 @@ cdg_breakpoint_break(
     uint64_t l_function_length = strlen(a_function);
     wchar_t l_function[l_function_length + 1];
     mbstate_t l_state;
-    mbsrtowcs(l_function, a_function, l_function_length, &l_state);
+    mbsrtowcs(l_function, &a_function, l_function_length, &l_state);
     l_function[l_function_length] = L'\0';
     a_breakpoint->m_set_site.m_file = a_file;
     a_breakpoint->m_set_site.m_function = l_function;
