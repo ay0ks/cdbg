@@ -20,8 +20,8 @@ target_compile_options(cdbg PUBLIC
   "-Wextra"
   "-Wshadow"
 )
-target_sources(cdbg PUBLIC ./src/cdbg.c)
-target_include_directories(cdbg PUBLIC ./include)
+target_sources(cdbg PRIVATE ./src/cdbg.c)
+target_include_directories(cdbg PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_library(cdbg_shared SHARED $<TARGET_OBJECTS:cdbg>)
 add_library(cdbg_static STATIC $<TARGET_OBJECTS:cdbg>)
