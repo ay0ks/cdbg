@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.39.0)
+cmake_minimum_required(VERSION 3.31.0)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
