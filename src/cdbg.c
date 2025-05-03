@@ -121,16 +121,6 @@ cdbg_dump(
       );
     }
     else if(a_lookaround.m_lookbehind > 0
-            && l_u > a_lookaround.m_lookbehind
-            && l_u <= a_size + a_lookaround.m_lookbehind)
-    {
-      fwprintf(
-        stderr,
-        L"%06x",
-        __cdbg_clamp(0, l_u - a_lookaround.m_lookahead, a_lookaround.m_lookahead)
-      );
-    }
-    else if(a_lookaround.m_lookbehind > 0
             && a_lookaround.m_lookahead > 0
             && l_u > a_size + a_lookaround.m_lookbehind
             && l_u <= a_size + a_lookaround.m_lookbehind + a_lookaround.m_lookahead)
@@ -139,6 +129,14 @@ cdbg_dump(
         stderr,
         L"%06x",
         __cdbg_clamp(0, l_u - a_lookaround.m_lookahead, a_size + a_lookaround.m_lookahead)
+      );
+    }
+    else 
+    {
+      fwprintf(
+        stderr,
+        L"%06x",
+        __cdbg_clamp(0, l_u - a_lookaround.m_lookahead, a_lookaround.m_lookahead)
       );
     }
     fwprintf(stderr, L"  ");
