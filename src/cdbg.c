@@ -144,7 +144,7 @@ cdbg_dump(
     for(uint8_t l_i = 0; l_i < 16; l_i += 1)
     {
       uint64_t l_k = l_u + l_i;
-      if(l_k < 0 || l_k > a_size + a_lookaround.m_lookbehind + a_lookaround.m_lookahead)
+      if(l_k >= a_size + a_lookaround.m_lookbehind + a_lookaround.m_lookahead)
       {
         fwprintf(stderr, l_tty ? L"\x1b[7m??\x1b[27m " : L"?? ");
       }
@@ -168,7 +168,7 @@ cdbg_dump(
     for(uint8_t l_i = 0; l_i < 16; l_i += 1)
     {
       uint64_t l_k = l_u + l_i;
-      if(l_k < 0 || l_k > a_size + a_lookaround.m_lookbehind + a_lookaround.m_lookahead)
+      if(l_k >= a_size + a_lookaround.m_lookbehind + a_lookaround.m_lookahead)
       {
         fwprintf(stderr, l_tty ? L"\x1b[7m?\x1b[27m" : L"?");
       }
