@@ -14,7 +14,9 @@
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
 #  include <debugapi.h>
+#  include <io.h>
 #elif defined(__linux__)
+#  include <unistd.h>
 #endif
 
 #define __cdbg_minmax_helper($Op, $1, $2)                                      \
@@ -93,6 +95,7 @@ cdbg_dump(
   l_function[l_function_length] = L'\0';
   uint64_t l_size_total = a_size + a_lookaround.m_lookbehind + a_lookaround.m_lookahead;
   char *l_value = a_value - a_lookaround.m_lookbehind;
+  bool l_tty = (bool)isatty(fileno(stderr));
   fwprintf(
     stderr,
     L"%ls:%ls:%llu: dump of %ls at %ls (%llu <-%llu %llu-> %llu)\n",
@@ -143,15 +146,29 @@ cdbg_dump(
     for(uint8_t l_i = 0; l_i < 16; l_i += 1)
     {
       uint64_t l_k = l_u + l_i;
-      uint8_t l_byte = *(l_value + l_k);
-      fwprintf(stderr, L"%02X ", l_byte);
+      if(l_k < 0 && l_k > a_size + a_lookaround.m_lookbehind + a_lookaround.m_lookahead)
+      {
+        fwprintf(stderr, l_tty ? L"\x1b[7m??\x1b[27m " : L"?? ");
+      }
+      else
+      {
+        uint8_t l_byte = *(l_value + l_k);
+        fwprintf(stderr, L"%02X ", l_byte);
+      }
     }
     fwprintf(stderr, L" ");
     for(uint8_t l_i = 0; l_i < 16; l_i += 1)
     {
       uint64_t l_k = l_u + l_i;
-      uint8_t l_byte = *(l_value + l_k);
-      fwprintf(stderr, L"%c", isprint(l_byte) ? l_byte : '.');
+      if(l_k < 0 && l_k > a_size + a_lookaround.m_lookbehind + a_lookaround.m_lookahead)
+      {
+        fwprintf(stderr, l_tty ? L"\x1b[7m?\x1b[27m" : L"?");
+      }
+      else
+      {
+        uint8_t l_byte = *(l_value + l_k);
+        fwprintf(stderr, L"%c ", isprint(l_byte) ? l_byte : '.');
+      }
     }
     fwprintf(stderr, L"\n");
   }
