@@ -25,12 +25,10 @@
 #define __cdbg_max($1, $2) __cdbg_minmax_helper(>, $1, $2)
 
 #define __cdbg_clamp($1, $2, $3)                                               \
-  ({                                                                           \
-    typeof($1) l_min = ($1);                                                   \
-    typeof($2) l_value = ($2);                                                 \
-    typeof($3) l_max = ($3);                                                   \
-    (l_value < l_min) ? l_min : (l_value > l_max ? l_max : l_value);           \
-  })
+  ((((typeof($2))($2)) < ((typeof($1))($1)))                                   \
+    ? ((typeof($1))($1))                                                       \
+    : (((typeof($2))($2)) > ((typeof($3))($3))                                 \
+      ? ((typeof($3))($3)) : ((typeof($2))($2))))
 
 bool g_locale_set = false;
 
