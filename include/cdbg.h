@@ -6,31 +6,43 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define __cdbg_stringify($Value) #$Value
-#define __cdbg_stringify_widen($Value) L##$Value
+#define __cdbg_count_first(...)                                                \
+  __cdbg_count_first_helper(__VA_OPT__(__VA_ARGS__, ) 0)
+#define __cdbg_count_first_helper($1, ...) $1
+#define __cdbg_count(...)                                                                               \
+  ((sizeof((typeof(__cdbg_count_first(__VA_ARGS__))[]){__cdbg_count_first(__VA_ARGS__), ##__VA_ARGS__}) \
+    / sizeof(__cdbg_count_first(__VA_ARGS__)))                                                          \
+   - 1)
 
-#define cdbg_stringify($Value) __cdbg_stringify($Value)
-#define cdbg_stringify_widen($Value) __cdbg_stringify_widen($Value)
+#define __cdbg_stringify_helper($Value) #$Value
+#define __cdbg_stringify_widen_helper($Value) L##$Value
+#define __cdbg_stringify($Value) __cdbg_stringify_helper($Value)
+#define __cdbg_stringify_widen($Value) __cdbg_stringify_widen_helper($Value)
 
-#if defined(_WIN32) || defined(_WIN64)
-#  define cdbg_fprintf fwprintf_s
-#  define cdbg_sprintf _snwprintf
-#  define cdbg_printf wprintf_s
-#else
-#  define cdbg_fprintf fwprintf
-#  define cdbg_sprintf swprintf
-#  define cdbg_printf wprintf
-#endif
+#define __cdbg_assert($Expression, $Abort, $ArgCount, ...)                     \
+  ((void)({                                                                    \
+    do {                                                                       \
+      if(!($Expression))                                                       \
+      {                                                                        \
+        cdbg_assert(                                                           \
+          (__cdbg_stringify_widen(__FILE__)),                                  \
+          (__func__),                                                          \
+          (__LINE__),                                                          \
+          (__cdbg_stringify_widen(__cdbg_stringify($Expression))),             \
+          ($Abort),                                                            \
+          ($ArgCount),                                                         \
+          ##__VA_ARGS__                                                        \
+        );                                                                     \
+      }                                                                        \
+    }                                                                          \
+    while(0);                                                                  \
+  }))
 
-#define assert($Expression, ...)                                                                                                                                    \
-  ((void)((!!($Expression))                                                                                                                                         \
-          || (cdbg_assert((cdbg_stringify_widen(__FILE__)), (__func__), (__LINE__), (cdbg_stringify_widen(cdbg_stringify($Expression))), true, ##__VA_ARGS__), (0)) \
-  ))
+#define assert($Expression, ...)                                               \
+  __cdbg_assert(($Expression), (true), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
 
-#define assert_soft($Expression, ...)                                                                                                                                \
-  ((void)((!!($Expression))                                                                                                                                          \
-          || (cdbg_assert((cdbg_stringify_widen(__FILE__)), (__func__), (__LINE__), (cdbg_stringify_widen(cdbg_stringify($Expression))), false, ##__VA_ARGS__), (0)) \
-  ))
+#define assert_soft($Expression, ...)                                          \
+  __cdbg_assert(($Expression), (false), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
 
 void
 cdbg_assert(
@@ -48,21 +60,21 @@ cdbg_abort();
 typedef struct cdbg_dump_lookaround_s
 {
   uint8_t m_dummy : 1;
-  uint64_t m_lookbehind;
-  uint64_t m_lookahead;
+  uint32_t m_lookbehind;
+  uint32_t m_lookahead;
 } cdbg_dump_lookaround_t;
 
 #define dump($Value, $ValueSize, ...)                                          \
   ((void)({                                                                    \
     wchar_t l_address[48];                                                     \
-    ((void)(cdbg_sprintf(l_address, sizeof(l_address), L"%p", $Value)));       \
+    ((void)(swprintf(l_address, sizeof(l_address), L"%p", $Value)));           \
     ((void)(cdbg_dump(                                                         \
-      (cdbg_stringify_widen(__FILE__)),                                        \
+      (__cdbg_stringify_widen(__FILE__)),                                      \
       (__func__),                                                              \
       (__LINE__),                                                              \
       (l_address),                                                             \
       (cdbg_dump_lookaround_t){0, ##__VA_ARGS__},                              \
-      (cdbg_stringify_widen(cdbg_stringify($Value))),                          \
+      (__cdbg_stringify_widen(__cdbg_stringify($Value))),                      \
       ($ValueSize),                                                            \
       ((char *)($Value))                                                       \
     )));                                                                       \
@@ -77,7 +89,7 @@ cdbg_dump(
   cdbg_dump_lookaround_t a_lookaround,
   const wchar_t *a_value_repr,
   uint64_t a_size,
-  const char *a_value
+  char *a_value
 );
 
 typedef struct cdbg_breakpoint_s
