@@ -153,7 +153,17 @@ cdbg_dump(
       else
       {
         uint8_t l_byte = *(l_value + l_k);
+        if(l_tty)
+        {
+          fwprintf(
+            stderr,
+            (l_k > a_lookaround.m_lookbehind && l_k <= a_size + a_lookaround.m_lookbehind)
+              ? L"\x1b[1m"
+              : L"\x1b[2m"
+          );
+        }
         fwprintf(stderr, L"%02X ", l_byte);
+        if(l_tty) { fwprintf(stderr, L"\x1b[0m"); }
       }
     }
     fwprintf(stderr, L" ");
@@ -167,7 +177,17 @@ cdbg_dump(
       else
       {
         uint8_t l_byte = *(l_value + l_k);
+        if(l_tty)
+        {
+          fwprintf(
+            stderr,
+            (l_k > a_lookaround.m_lookbehind && l_k <= a_size + a_lookaround.m_lookbehind)
+              ? L"\x1b[1m"
+              : L"\x1b[2m"
+          );
+        }
         fwprintf(stderr, L"%c ", isprint(l_byte) ? l_byte : '.');
+        if(l_tty) { fwprintf(stderr, L"\x1b[0m"); }
       }
     }
     fwprintf(stderr, L"\n");
