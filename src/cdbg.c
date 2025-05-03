@@ -186,7 +186,7 @@ cdbg_dump(
               : L"\x1b[2m"
           );
         }
-        fwprintf(stderr, L"%c ", isprint(l_byte) ? l_byte : '.');
+        fwprintf(stderr, L"%c", isprint(l_byte) ? l_byte : '.');
         if(l_tty) { fwprintf(stderr, L"\x1b[0m"); }
       }
     }
