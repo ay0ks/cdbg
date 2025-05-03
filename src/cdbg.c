@@ -8,12 +8,27 @@
 #include <string.h>
 #include <locale.h>
 #include <wchar.h>
+#include <ctype.h>
 
 #if defined(_WIN32) || defined(_WIN64)
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
 #  include <debugapi.h>
+#elif defined(__linux__)
 #endif
+
+#define __cdbg_minmax_helper($Op, $1, $2)                                      \
+  ((((typeof($1))($1))$Op((typeof($2))($2))) ? ((typeof($1))($1)) : ((typeof($2))($2)))
+#define __cdbg_min($1, $2) __cdbg_minmax_helper(<, $1, $2)
+#define __cdbg_max($1, $2) __cdbg_minmax_helper(>, $1, $2)
+
+#define __cdbg_clamp($1, $2, $3)                                               \
+  ({                                                                           \
+    typeof($1) l_min = ($1);                                                   \
+    typeof($2) l_value = ($2);                                                 \
+    typeof($3) l_max = ($3);                                                   \
+    (l_value < l_min) ? l_min : (l_value > l_max ? l_max : l_value);           \
+  })
 
 bool g_locale_set = false;
 
@@ -28,18 +43,20 @@ cdbg_assert(
 )
 {
   if(!g_locale_set) { setlocale(LC_ALL, ""); }
-  va_list l_args;
-  va_start(l_args, a_abort);
   uint64_t l_function_length = strlen(a_function);
   wchar_t l_function[l_function_length + 1];
   mbstate_t l_state;
   mbsrtowcs(l_function, &a_function, l_function_length, &l_state);
   l_function[l_function_length] = L'\0';
-  const wchar_t *const l_message = va_arg(l_args, wchar_t *);
-  cdbg_fprintf(stderr, L"%s:%llu Assertion failed in %s", a_file, a_line, l_function, a_expression);
-  if(l_message != NULL) { cdbg_fprintf(stderr, L" (%s)", l_message); }
-  cdbg_fprintf(stderr, L"\n");
+  va_list l_args;
+  va_start(l_args, a_abort);
+  const wchar_t *l_message = va_arg(l_args, wchar_t *);
   va_end(l_args);
+  fwprintf(
+    stderr, L"%ls:%ls:%llu: assertion failed\n  expression: %ls", a_file, l_function, a_line, a_expression
+  );
+  if(l_message != NULL) { fwprintf(stderr, L"\n  reason: %ls", l_message); }
+  fwprintf(stderr, L"\n");
   if(a_abort) { cdbg_abort(); }
 }
 
@@ -63,63 +80,90 @@ cdbg_dump(
   cdbg_dump_lookaround_t a_lookaround,
   const wchar_t *a_value_repr,
   uint64_t a_size,
-  const char *a_value
+  char *a_value
 )
 {
   if(!g_locale_set) { setlocale(LC_ALL, ""); }
   uint64_t l_function_length = strlen(a_function);
   wchar_t l_function[l_function_length + 1];
+  wmemset(l_function, L'\0', l_function_length + 1);
   mbstate_t l_state;
+  memset(&l_state, 0, sizeof(l_state));
   mbsrtowcs(l_function, &a_function, l_function_length, &l_state);
   l_function[l_function_length] = L'\0';
-  uint64_t l_address = wcstoll(a_address, NULL, 16);
-  cdbg_printf(L"%s:%llu %s: %s (at %s)\n", a_file, a_line, l_function, a_value_repr, a_address);
-  cdbg_printf(
-    L"  offset   hex                                              ascii\n"
+  uint64_t l_size_total = a_size + a_lookaround.m_lookbehind + a_lookaround.m_lookahead;
+  char *l_value = a_value - a_lookaround.m_lookbehind;
+  fwprintf(
+    stderr,
+    L"%ls:%ls:%llu: dump of %ls at %ls (%llu <-%llu %llu-> %llu)\n",
+    a_file,
+    l_function,
+    a_line,
+    a_value_repr,
+    a_address,
+    a_size,
+    a_lookaround.m_lookbehind,
+    a_lookaround.m_lookahead,
+    l_size_total
   );
-  a_value -= a_lookaround.m_lookbehind;
-  uint64_t l_size = a_size + a_lookaround.m_lookbehind + a_lookaround.m_lookahead;
-  for(uint64_t l_i = 0, l_j = 0; l_i <= l_size; l_i += 16)
+  fwprintf(
+    stderr, L"  offset  hex                                              ascii\n"
+  );
+  for(uint64_t l_u = 0; l_u < l_size_total; l_u += 16)
   {
-    cdbg_printf(L"\x1b[38;5;7m");
-    if(a_lookaround.m_lookbehind > 0 || a_lookaround.m_lookahead > 0)
+    fwprintf(stderr, L"  ");
+    if(a_lookaround.m_lookbehind > 0 && l_u <= a_lookaround.m_lookbehind)
     {
-      if(l_j < a_lookaround.m_lookbehind || l_j > a_size + a_lookaround.m_lookahead)
-      {
-        cdbg_printf(L"\x1b[2m\x1b[38;5;8m");
-      }
+      fwprintf(
+        stderr,
+        L"%06x",
+        __cdbg_clamp(0, a_lookaround.m_lookbehind - l_u, a_lookaround.m_lookbehind)
+      );
     }
-    cdbg_printf(L"  %08llu ", l_address + l_i);
-    for(uint64_t l_k = 0; l_k < 16; ++l_k)
+    else if(a_lookaround.m_lookbehind > 0
+            && l_u > a_lookaround.m_lookbehind
+            && l_u <= a_size + a_lookaround.m_lookbehind)
     {
-      if(l_i + l_k >= l_size) { cdbg_printf(L"\x1b[7m??\x1b[27m "); }
-      else
-      {
-        uint8_t l_byte = *(a_value + l_i + l_k);
-        cdbg_printf(L"%02X ", l_byte);
-      }
-      l_j += 1;
+      fwprintf(
+        stderr,
+        L"%06x",
+        __cdbg_clamp(0, l_u - a_lookaround.m_lookahead, a_lookaround.m_lookahead)
+      );
     }
-    cdbg_printf(L" ");
-    for(int64_t l_k = 0; l_k < 16; ++l_k)
+    else if(a_lookaround.m_lookbehind > 0
+            && a_lookaround.m_lookahead > 0
+            && l_u > a_size + a_lookaround.m_lookbehind
+            && l_u <= a_size + a_lookaround.m_lookbehind + a_lookaround.m_lookahead)
     {
-      if(l_i + l_k >= l_size) { cdbg_printf(L"\x1b[7m?\x1b[27m"); }
-      else
-      {
-        wchar_t l_byte = *(a_value + l_i + l_k);
-        if(l_byte < 0x20 || l_byte > 0x7E) { cdbg_printf(L"\x1b[7m.\x1b[27m"); }
-        else { cdbg_printf(L"%c", l_byte); }
-      }
+      fwprintf(
+        stderr,
+        L"%06x",
+        __cdbg_clamp(0, l_u - a_lookaround.m_lookahead, a_size + a_lookaround.m_lookahead)
+      );
     }
-    cdbg_printf(L"\x1b[0m\n");
+    fwprintf(stderr, L"  ");
+    for(uint8_t l_i = 0; l_i < 16; l_i += 1)
+    {
+      uint64_t l_k = l_u + l_i;
+      uint8_t l_byte = *(l_value + l_k);
+      fwprintf(stderr, L"%02X ", l_byte);
+    }
+    fwprintf(stderr, L" ");
+    for(uint8_t l_i = 0; l_i < 16; l_i += 1)
+    {
+      uint64_t l_k = l_u + l_i;
+      uint8_t l_byte = *(l_value + l_k);
+      fwprintf(stderr, L"%c", isprint(l_byte) ? l_byte : '.');
+    }
+    fwprintf(stderr, L"\n");
   }
 }
 
 void
 cdbg_breakpoint_set(
   cdbg_breakpoint_t *a_breakpoint,
-  const wchar_t *const a_file,
-  const char *const a_function,
+  const wchar_t *a_file,
+  const char *a_function,
   uint64_t a_line
 )
 {
@@ -138,9 +182,9 @@ cdbg_breakpoint_set(
   }
   else
   {
-    cdbg_fprintf(
+    fwprintf(
       stderr,
-      L"Breakpoint set in %s:%s at %llu triggered in %s:%s at %llu\n",
+      L"%ls:%ls:%llu: breakpoint %ls:%ls:%llu triggered\n",
       a_breakpoint->m_set_site.m_file,
       a_breakpoint->m_set_site.m_function,
       a_breakpoint->m_set_site.m_line,
@@ -155,11 +199,12 @@ cdbg_breakpoint_set(
 void
 cdg_breakpoint_break(
   cdbg_breakpoint_t *a_breakpoint,
-  const wchar_t *const a_file,
-  const char *const a_function,
+  const wchar_t *a_file,
+  const char *a_function,
   uint64_t a_line
 )
 {
+  if(!g_locale_set) { setlocale(LC_ALL, ""); }
   assert(a_breakpoint != NULL);
   if(a_breakpoint->m_armed)
   {
