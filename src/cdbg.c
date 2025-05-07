@@ -247,8 +247,8 @@ cdg_breakpoint_break(
     mbstate_t l_state;
     mbsrtowcs(l_function, &a_function, l_function_length, &l_state);
     l_function[l_function_length] = L'\0';
-    a_breakpoint->m_set_site.m_file = a_file;
-    a_breakpoint->m_set_site.m_function = l_function;
+    a_breakpoint->m_jump_site.m_file = a_file;
+    a_breakpoint->m_jump_site.m_function = l_function;
     a_breakpoint->m_jump_site.m_line = a_line;
     longjmp(a_breakpoint->m_jump_site.m_buffer, 1);
   }
