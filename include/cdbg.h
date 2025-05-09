@@ -22,7 +22,7 @@
     do {                                                                       \
       if(!($Expression))                                                       \
       {                                                                        \
-        if(($Jump) && ($JumpLabel) != nullptr) { goto (*($JumpLabel)); }      \
+        if(($Jump) && ($JumpLabel) != nullptr) { goto *($JumpLabel); }         \
         cdbg_assert(                                                           \
           (__cdbg_stringify_widen(__FILE__)),                                  \
           (__func__),                                                          \
