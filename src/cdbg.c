@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <signal.h>
 #include <string.h>
 #include <locale.h>
@@ -39,7 +40,7 @@ cdbg_assert(
   uint64_t a_line,
   const wchar_t *a_expression,
   bool a_abort,
-  uint64_t a_argc
+  uint64_t a_argc,
   ...
 )
 {
