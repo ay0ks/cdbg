@@ -39,6 +39,7 @@ cdbg_assert(
   uint64_t a_line,
   const wchar_t *a_expression,
   bool a_abort,
+  uint64_t a_argc
   ...
 )
 {
@@ -50,12 +51,23 @@ cdbg_assert(
   l_function[l_function_length] = L'\0';
   va_list l_args;
   va_start(l_args, a_abort);
-  const wchar_t *l_message = va_arg(l_args, wchar_t *);
+  wchar_t *l_message = nullptr, *l_message_2 = nullptr;
+  if(a_argc > 0) { l_message = va_arg(l_args, wchar_t *); }
+  if(a_argc > 1) {
+    va_list l_args_2;
+    va_copy(l_args_2, l_args);
+    uint64_t l_message_size = vswprintf(nullptr, 0, l_message, l_args_2);
+    va_end(l_args_2);
+    l_message_2 = malloc((l_message_size + 1) * sizeof(wchar_t));
+    assert(l_message_2 != NULL);
+    vswprintf(l_message_2, l_message_size, l_message, l_args);
+  }
+  else { l_message_2 = l_message; }
   va_end(l_args);
   fwprintf(
     stderr, L"%ls:%ls:%llu: assertion failed\n  expression: %ls", a_file, l_function, a_line, a_expression
   );
-  if(l_message != nullptr) { fwprintf(stderr, L"\n  reason: %ls", l_message); }
+  if(l_message != nullptr) { fwprintf(stderr, L"\n  reason: %ls", l_message_2); }
   fwprintf(stderr, L"\n");
   if(a_abort) { cdbg_abort(); }
 }
