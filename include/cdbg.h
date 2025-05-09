@@ -19,11 +19,12 @@
 #define __cdbg_stringify($Value) __cdbg_stringify_helper($Value)
 #define __cdbg_stringify_widen($Value) __cdbg_stringify_widen_helper($Value)
 
-#define __cdbg_assert($Expression, $Abort, $ArgCount, ...)                     \
+#define __cdbg_assert($Expression, $Abort, $Jump, $JumpLabel, $ArgCount, ...)  \
   ((void)({                                                                    \
     do {                                                                       \
       if(!($Expression))                                                       \
       {                                                                        \
+        if(($Jump)) { goto ($JumpLabel); }                                     \
         cdbg_assert(                                                           \
           (__cdbg_stringify_widen(__FILE__)),                                  \
           (__func__),                                                          \
@@ -39,10 +40,13 @@
   }))
 
 #define assert($Expression, ...)                                               \
-  __cdbg_assert(($Expression), (true), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
+  __cdbg_assert(($Expression), (true), (false), (nullptr), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
 
 #define assert_soft($Expression, ...)                                          \
-  __cdbg_assert(($Expression), (false), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
+  __cdbg_assert(($Expression), (false), (false), (nullptr), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
+
+#define goto_assert($Label, $Expression, ...)                                  \
+  __cdbg_assert(($Expression), (false), (true), ($Label), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
 
 void
 cdbg_assert(
