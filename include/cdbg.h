@@ -37,10 +37,10 @@
   }))
 
 #define assert($Expression, ...)                                               \
-  __cdbg_assert(($Expression), (true), (false), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
+  __cdbg_assert(($Expression), (true), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
 
 #define assert_soft($Expression, ...)                                          \
-  __cdbg_assert(($Expression), (false), (false), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
+  __cdbg_assert(($Expression), (false), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
 
 #define goto_assert($Label, $Expression, ...)                                  \
   ((void)({                                                                    \
