@@ -6,13 +6,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define __cdbg_count_first(...)                                                \
-  __cdbg_count_first_helper(__VA_OPT__(__VA_ARGS__, ) 0)
-#define __cdbg_count_first_helper($1, ...) $1
-#define __cdbg_count(...)                                                                               \
-  ((sizeof((typeof(__cdbg_count_first(__VA_ARGS__))[]){__cdbg_count_first(__VA_ARGS__), ##__VA_ARGS__}) \
-    / sizeof(__cdbg_count_first(__VA_ARGS__)))                                                          \
-   - 1)
+#define __cdbg_count_helper_2($1, ...) ((typeof($1)[]){ $1, __VA_ARGS__ })
+#define __cdbg_count_helper_1(...) \
+  ((uint64_t)(sizeof(__VA_ARGS__)/sizeof(*(__VA_ARGS__))))
+#define __cdbg_count(...) \
+  (0 __VA_OPT__( + __cdbg_count_helper_1(__cdbg_count_helper_2(__VA_ARGS__))))
 
 #define __cdbg_stringify_helper($Value) #$Value
 #define __cdbg_stringify_widen_helper($Value) L##$Value
@@ -24,7 +22,7 @@
     do {                                                                       \
       if(!($Expression))                                                       \
       {                                                                        \
-        if(($Jump)) { goto ($JumpLabel); }                                     \
+        if(($Jump) && (*($JumpLabel)) != nullptr) { goto (*($JumpLabel)); }    \
         cdbg_assert(                                                           \
           (__cdbg_stringify_widen(__FILE__)),                                  \
           (__func__),                                                          \
@@ -40,13 +38,13 @@
   }))
 
 #define assert($Expression, ...)                                               \
-  __cdbg_assert(($Expression), (true), (false), (nullptr), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
+  __cdbg_assert(($Expression), (true), (false), (&nullptr), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
 
 #define assert_soft($Expression, ...)                                          \
-  __cdbg_assert(($Expression), (false), (false), (nullptr), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
+  __cdbg_assert(($Expression), (false), (false), (&nullptr), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
 
 #define goto_assert($Label, $Expression, ...)                                  \
-  __cdbg_assert(($Expression), (false), (true), ($Label), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
+  __cdbg_assert(($Expression), (false), (true), (&&$Label), (__cdbg_count(__VA_ARGS__)), ##__VA_ARGS__)
 
 void
 cdbg_assert(
