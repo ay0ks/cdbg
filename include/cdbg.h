@@ -51,6 +51,7 @@ cdbg_assert(
   uint64_t a_line,
   const wchar_t *a_expression,
   bool a_abort,
+  uint64_t a_argc,
   ...
 );
 
