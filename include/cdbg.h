@@ -56,7 +56,7 @@
           (__cdbg_count(__VA_ARGS__)),                                         \
           ##__VA_ARGS__                                                        \
         );                                                                     \
-        goto *(&&$Label);                                                      \    
+        goto *(&&$Label);                                                      \
       }                                                                        \
     }                                                                          \
     while(0);                                                                  \
