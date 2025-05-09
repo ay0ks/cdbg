@@ -55,7 +55,7 @@ cdbg_assert(
   fwprintf(
     stderr, L"%ls:%ls:%llu: assertion failed\n  expression: %ls", a_file, l_function, a_line, a_expression
   );
-  if(l_message != NULL) { fwprintf(stderr, L"\n  reason: %ls", l_message); }
+  if(l_message != nullptr) { fwprintf(stderr, L"\n  reason: %ls", l_message); }
   fwprintf(stderr, L"\n");
   if(a_abort) { cdbg_abort(); }
 }
@@ -200,7 +200,7 @@ cdbg_breakpoint_set(
   uint64_t a_line
 )
 {
-  assert(a_breakpoint != NULL);
+  assert(a_breakpoint != nullptr);
   if(setjmp(a_breakpoint->m_jump_site.m_buffer) == 0)
   {
     a_breakpoint->m_armed = true;
@@ -237,8 +237,8 @@ cdg_breakpoint_break(
   uint64_t a_line
 )
 {
+  assert(a_breakpoint != nullptr);
   if(!g_locale_set) { setlocale(LC_ALL, ""); }
-  assert(a_breakpoint != NULL);
   if(a_breakpoint->m_armed)
   {
     a_breakpoint->m_armed = false;
@@ -259,7 +259,7 @@ cdbg_breakpoint_clear(
   cdbg_breakpoint_t *a_breakpoint
 )
 {
-  assert(a_breakpoint != NULL);
+  assert(a_breakpoint != nullptr);
   a_breakpoint->m_armed = false;
   memset(
     &a_breakpoint->m_jump_site.m_buffer, 0, sizeof(a_breakpoint->m_jump_site.m_buffer)
