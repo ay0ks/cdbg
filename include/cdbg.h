@@ -30,7 +30,7 @@
           ($Abort),                                                            \
           ($ArgCount),                                                         \
           ##__VA_ARGS__                                                        \
-        );                                                                     \ 
+        );                                                                     \
       }                                                                        \
     }                                                                          \
     while(0);                                                                  \
