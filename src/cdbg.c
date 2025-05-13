@@ -126,7 +126,7 @@ cdbg_dump(
   for(uint64_t l_u = 0; l_u < l_size_total; l_u += 16)
   {
     fwprintf(stderr, L"  ");
-    if(a_lookaround.m_lookbehind > 0 && l_u <= a_lookaround.m_lookbehind)
+    if(a_lookaround.m_lookbehind > 0 && l_u < a_lookaround.m_lookbehind)
     {
       fwprintf(
         stderr,
@@ -142,7 +142,7 @@ cdbg_dump(
       fwprintf(
         stderr,
         L"%06x",
-        __cdbg_clamp(0, l_u - a_lookaround.m_lookahead, a_size + a_lookaround.m_lookahead)
+        __cdbg_clamp(0, l_u - a_lookaround.m_lookbehind, a_size + a_lookaround.m_lookahead)
       );
     }
     else
@@ -150,7 +150,7 @@ cdbg_dump(
       fwprintf(
         stderr,
         L"%06x",
-        __cdbg_clamp(0, l_u, a_size + a_lookaround.m_lookahead)
+        __cdbg_clamp(0, l_u - a_lookaround.m_lookbehind, a_size)
       );
     }
     fwprintf(stderr, L"  ");
