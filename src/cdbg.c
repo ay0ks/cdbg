@@ -145,12 +145,12 @@ cdbg_dump(
         __cdbg_clamp(0, l_u - a_lookaround.m_lookahead, a_size + a_lookaround.m_lookahead)
       );
     }
-    else 
+    else
     {
       fwprintf(
         stderr,
         L"%06x",
-        __cdbg_clamp(0, l_u - a_lookaround.m_lookahead, a_lookaround.m_lookahead)
+        __cdbg_clamp(0, l_u, a_size + a_lookaround.m_lookahead)
       );
     }
     fwprintf(stderr, L"  ");
