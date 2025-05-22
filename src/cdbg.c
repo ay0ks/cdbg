@@ -45,11 +45,6 @@ cdbg_assert(
 )
 {
   if(!g_locale_set) { setlocale(LC_ALL, ""); }
-  uint64_t l_function_length = strlen(a_function);
-  wchar_t l_function[l_function_length + 1];
-  mbstate_t l_state;
-  mbsrtowcs(l_function, &a_function, l_function_length, &l_state);
-  l_function[l_function_length] = L'\0';
   va_list l_args;
   va_start(l_args, a_abort);
   wchar_t *l_message = nullptr, *l_message_2 = nullptr;
@@ -66,7 +61,7 @@ cdbg_assert(
   else { l_message_2 = l_message; }
   va_end(l_args);
   fwprintf(
-    stderr, L"%ls:%ls:%llu: assertion failed\n  expression: %ls", a_file, l_function, a_line, a_expression
+    stderr, L"%ls:%s:%llu: assertion failed\n  expression: %ls", a_file, a_function, a_line, a_expression
   );
   if(l_message != nullptr) { fwprintf(stderr, L"\n  reason: %ls", l_message_2); }
   fwprintf(stderr, L"\n");
@@ -97,21 +92,14 @@ cdbg_dump(
 )
 {
   if(!g_locale_set) { setlocale(LC_ALL, ""); }
-  uint64_t l_function_length = strlen(a_function);
-  wchar_t l_function[l_function_length + 1];
-  wmemset(l_function, L'\0', l_function_length + 1);
-  mbstate_t l_state;
-  memset(&l_state, 0, sizeof(l_state));
-  mbsrtowcs(l_function, &a_function, l_function_length, &l_state);
-  l_function[l_function_length] = L'\0';
   uint64_t l_size_total = a_size + a_lookaround.m_lookbehind + a_lookaround.m_lookahead;
   char *l_value = a_value - a_lookaround.m_lookbehind;
   bool l_tty = (bool)isatty(fileno(stderr));
   fwprintf(
     stderr,
-    L"%ls:%ls:%llu: dump of %ls at %ls (%llu <-%llu %llu-> %llu)\n",
+    L"%ls:%s:%llu: dump of %ls at %ls (%llu <-%llu %llu-> %llu)\n",
     a_file,
-    l_function,
+    a_function,
     a_line,
     a_value_repr,
     a_address,
@@ -217,20 +205,15 @@ cdbg_breakpoint_set(
   if(setjmp(a_breakpoint->m_jump_site.m_buffer) == 0)
   {
     a_breakpoint->m_armed = true;
-    uint64_t l_function_length = strlen(a_function);
-    wchar_t l_function[l_function_length + 1];
-    mbstate_t l_state;
-    mbsrtowcs(l_function, &a_function, l_function_length, &l_state);
-    l_function[l_function_length] = L'\0';
     a_breakpoint->m_set_site.m_file = a_file;
-    a_breakpoint->m_set_site.m_function = l_function;
+    a_breakpoint->m_set_site.m_function = a_function;
     a_breakpoint->m_set_site.m_line = a_line;
   }
   else
   {
     fwprintf(
       stderr,
-      L"%ls:%ls:%llu: breakpoint %ls:%ls:%llu triggered\n",
+      L"%ls:%s:%llu: breakpoint %ls:%s:%llu triggered\n",
       a_breakpoint->m_set_site.m_file,
       a_breakpoint->m_set_site.m_function,
       a_breakpoint->m_set_site.m_line,
@@ -255,13 +238,8 @@ cdg_breakpoint_break(
   if(a_breakpoint->m_armed)
   {
     a_breakpoint->m_armed = false;
-    uint64_t l_function_length = strlen(a_function);
-    wchar_t l_function[l_function_length + 1];
-    mbstate_t l_state;
-    mbsrtowcs(l_function, &a_function, l_function_length, &l_state);
-    l_function[l_function_length] = L'\0';
     a_breakpoint->m_jump_site.m_file = a_file;
-    a_breakpoint->m_jump_site.m_function = l_function;
+    a_breakpoint->m_jump_site.m_function = a_function;
     a_breakpoint->m_jump_site.m_line = a_line;
     longjmp(a_breakpoint->m_jump_site.m_buffer, 1);
   }
