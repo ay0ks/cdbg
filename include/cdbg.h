@@ -117,14 +117,14 @@ typedef struct cdbg_breakpoint_s
   struct
   {
     const wchar_t *m_file;
-    const wchar_t *m_function;
+    const char *m_function;
     uint64_t m_line;
   } m_set_site;
   struct
   {
     jmp_buf m_buffer;
     const wchar_t *m_file;
-    const wchar_t *m_function;
+    const char *m_function;
     uint64_t m_line;
   } m_jump_site;
 } cdbg_breakpoint_t;
