@@ -54,7 +54,6 @@ clog_assert(
     va_list l_args_2;
     va_copy(l_args_2, l_args);
     uint64_t l_message_size = vsnprintf(nullptr, 0, l_message, l_args_2);
-    printf("l_message = \"%s\", l_message_size = %lu\n", l_message, l_message_size);
     va_end(l_args_2);
     l_message_2 = malloc(l_message_size);
     assert(l_message_2 != NULL);
