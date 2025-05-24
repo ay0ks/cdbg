@@ -3,7 +3,7 @@ Standard: Latest
 UseTab: Never
 IndentWidth: 2
 TabWidth: 2
-ColumnLimit: 80
+ColumnLimit: 120
 
 CommentPragmas: "@pragma: "
 
@@ -45,7 +45,7 @@ AllowShortCaseLabelsOnASingleLine: false
 AllowShortCompoundRequirementOnASingleLine: true
 AllowShortEnumsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
-AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: Inline
 AllowShortLoopsOnASingleLine: true
 AllowShortNamespacesOnASingleLine: false
@@ -76,9 +76,7 @@ BracedInitializerIndentWidth: 2
 BreakAdjacentStringLiterals: true
 BreakAfterAttributes: Always
 BreakAfterReturnType: All
-### AAA
 BreakBeforeBinaryOperators: All
-### AAA
 BreakBeforeConceptDeclarations: Always
 BreakBeforeInlineASMColon: Always
 BreakBeforeTernaryOperators: true
@@ -186,9 +184,16 @@ SpacesInParensOptions:
 SpacesInSquareBrackets: false
 WrapNamespaceBodyWithEmptyLines: Never
 
+
 PenaltyBreakAssignment: 0
 PenaltyBreakBeforeFirstCallParameter: 0
-PenaltyBreakOpenParenthesis: 0
-PenaltyExcessCharacter: 1
-PenaltyReturnTypeOnItsOwnLine: 0
+PenaltyBreakBeforeMemberAccess: 20000
 PenaltyBreakComment: 0
+PenaltyBreakFirstLessLess: 0
+PenaltyBreakOpenParenthesis: 20000
+PenaltyBreakScopeResolution: 1
+PenaltyBreakString: 0
+PenaltyBreakTemplateDeclaration: 0
+PenaltyExcessCharacter: 20000
+PenaltyIndentedWhitespace: 0
+PenaltyReturnTypeOnItsOwnLine: 0

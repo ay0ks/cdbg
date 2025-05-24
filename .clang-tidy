@@ -134,3 +134,6 @@ CheckOptions:
   readability-identifier-naming.MacroDefinitionCase: aNy_CasE
   readability-identifier-naming.MacroDefinitionPrefix: ""
   readability-identifier-naming.MacroDefinitionSuffix: ""
+
+  readability-function-cognitive-complexity.Threshold: 25
+  readability-function-cognitive-complexity.IgnoreMacros: true
