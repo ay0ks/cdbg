@@ -14,10 +14,15 @@ set_target_properties(
 )
 target_compile_definitions(clog PUBLIC UNICODE)
 target_sources(clog PRIVATE ./src/clog.c)
+set_target_properties(clog PROPERTIES PUBLIC_HEADER ./include/clog.h)
 target_include_directories(clog PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_library(clog_shared SHARED $<TARGET_OBJECTS:clog>)
 add_library(clog_static STATIC $<TARGET_OBJECTS:clog>)
 set_target_properties(clog_shared clog_static PROPERTIES OUTPUT_NAME "$<TARGET_PROPERTY:clog,NAME>")
 
-install(TARGETS clog_shared clog_static)
+install(
+  TARGETS clog_shared clog_static
+  PUBLIC_HEADER
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/
+)
