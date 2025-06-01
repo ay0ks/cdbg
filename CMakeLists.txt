@@ -26,8 +26,4 @@ set_target_properties(
     PUBLIC_HEADER ./include/clog.h
 )
 
-install(
-  TARGETS clog_shared clog_static
-  PUBLIC_HEADER
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/
-)
+install(TARGETS clog_shared clog_static)
