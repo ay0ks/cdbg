@@ -13,16 +13,11 @@ set_target_properties(
   POSITION_INDEPENDENT_CODE 1
 )
 target_compile_definitions(clog PUBLIC UNICODE)
-target_compile_options(clog PUBLIC
-  "-UNDEBUG"
-  "-O2"
-  "-Wall"
-  "-Wextra"
-  "-Wshadow"
-)
 target_sources(clog PRIVATE ./src/clog.c)
 target_include_directories(clog PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_library(clog_shared SHARED $<TARGET_OBJECTS:clog>)
 add_library(clog_static STATIC $<TARGET_OBJECTS:clog>)
 set_target_properties(clog_shared clog_static PROPERTIES OUTPUT_NAME "$<TARGET_PROPERTY:clog,NAME>")
+
+install(TARGETS clog_shared clog_static)
