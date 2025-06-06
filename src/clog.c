@@ -1,15 +1,14 @@
 #include <clog.h>
 
-#include <assert.h>
+#include <ctype.h>
+#include <locale.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <string.h>
-#include <locale.h>
-#include <wchar.h>
-#include <ctype.h>
+#include <time.h>
 
 #if defined(_WIN32) || defined(_WIN64)
 #  define WIN32_LEAN_AND_MEAN
@@ -28,6 +27,20 @@
   ((((typeof($2))($2)) < ((typeof($1))($1)))                                                                           \
      ? ((typeof($1))($1))                                                                                              \
      : (((typeof($2))($2)) > ((typeof($3))($3)) ? ((typeof($3))($3)) : ((typeof($2))($2))))
+
+typedef enum clog_error_e: uint32_t
+{
+  k_ERROR_NULL_PTR = 0x0,
+  k_ERROR_NULL_PTR2 = 0x1,
+  k_ERROR_NONNULL_PTR2 = 0x2
+} clog_error_t;
+
+static const char *g_error_messages[] = {
+  [k_ERROR_NULL_PTR] = ("Pointer passed as parameter `%s` is null."),
+  [k_ERROR_NULL_PTR2] = ("Dereference of a pointer passed as parameter `%s` is null."),
+  [k_ERROR_NONNULL_PTR2] = ("Dereference of a pointer passed as parameter `%s` is non-null. Existing object cannot "
+                            "be overwritten, otherwise initialize it's value to null."),
+};
 
 bool g_locale_set = false;
 
@@ -190,4 +203,99 @@ clog_dump(
     }
     fprintf(stderr, "\n");
   }
+}
+
+void
+clog_logger_new(
+  clog_logger_t **a_logger_out,
+  const char a_id[CLOG_LOGGER_ID_SIZE],
+  clog_logger_level_t a_level
+)
+{
+  assert(a_logger_out != nullptr, g_error_messages[k_ERROR_NULL_PTR], "a_logger_out");
+  assert((*a_logger_out) == nullptr, g_error_messages[k_ERROR_NONNULL_PTR2], "a_logger_out");
+  assert(a_id != nullptr, g_error_messages[k_ERROR_NULL_PTR], "a_id");
+  clog_logger_t *l_logger = malloc(sizeof(clog_logger_t));
+  assert(l_logger != nullptr);
+  strncpy(l_logger->m_id, a_id, strnlen(a_id, CLOG_LOGGER_ID_SIZE));
+  l_logger->m_level = a_level;
+  (*a_logger_out) = l_logger;
+}
+
+void
+clog_logger_log(
+  clog_logger_t *a_logger,
+  clog_logger_level_t a_level,
+  const char *a_format,
+  ...
+)
+{
+  va_list l_args;
+  va_start(l_args, a_format);
+  clog_logger_log_extended(a_logger, a_level, a_format, l_args);
+  va_end(l_args);
+}
+
+void
+clog_logger_log_extended(
+  clog_logger_t *a_logger,
+  clog_logger_level_t a_level,
+  const char *a_format,
+  va_list a_args
+)
+{
+  assert(a_logger != nullptr, g_error_messages[k_ERROR_NULL_PTR], "a_logger");
+  if(a_level < a_logger->m_level)
+  {
+    return;
+  }
+  assert(a_format != nullptr, g_error_messages[k_ERROR_NULL_PTR], "a_format");
+  char *l_formatted = nullptr;
+  uint64_t l_formatted_size = 0;
+  FILE *l_stream = open_memstream(&l_formatted, &l_formatted_size);
+  assert(l_stream != nullptr);
+  struct timespec l_time;
+  clock_gettime(CLOCK_REALTIME, &l_time);
+  struct tm l_date;
+  localtime_r(&l_time.tv_sec, &l_date);
+  fprintf(l_stream, "[");
+  switch(a_level)
+  {
+    case k_TRACE:
+      fprintf(l_stream, "TRACE");
+      break;
+    case k_DEBUG:
+      fprintf(l_stream, "DEBUG");
+      break;
+    case k_INFORMATION:
+      fprintf(l_stream, "INFORMATION");
+      break;
+    case k_WARNING:
+      fprintf(l_stream, "WARNING");
+      break;
+    case k_ERROR:
+      fprintf(l_stream, "ERROR");
+      break;
+    case k_FATAL:
+      fprintf(l_stream, "FATAL");
+      break;
+  }
+  char l_date_string[64];
+  strftime(l_date_string, sizeof(l_date_string), "%Y-%m-%d %H:%M:%S", &l_date);
+  fprintf(l_stream, " %s.%lu] %s: ", l_date_string, l_time.tv_nsec / 1000000, a_logger->m_id);
+  vfprintf(l_stream, a_format, a_args);
+  fclose(l_stream);
+  assert(l_formatted != nullptr);
+  assert(l_formatted_size > 0);
+  printf("%s\n", l_formatted);
+}
+
+void
+clog_logger_free(
+  clog_logger_t **a_logger
+)
+{
+  assert(a_logger != nullptr, g_error_messages[k_ERROR_NULL_PTR], "a_logger");
+  free(*a_logger);
+  (*a_logger) = nullptr;
 }
