@@ -14,7 +14,14 @@
     do {                                                                                                               \
       if(!($Expression))                                                                                               \
       {                                                                                                                \
-        clog_assert((__FILE__), (__func__), (__LINE__), (__clog_stringify($Expression)), ($Abort), ##__VA_ARGS__);     \
+        clog_assert(                                                                                                   \
+          (__FILE__),                                                                                                  \
+          (__func__),                                                                                                  \
+          (__LINE__),                                                                                                  \
+          (__clog_stringify($Expression)),                                                                             \
+          ($Abort),                                                                                                    \
+          __VA_OPT__(__VA_ARGS__, ) nullptr                                                                            \
+        );                                                                                                             \
       }                                                                                                                \
     }                                                                                                                  \
     while(0);                                                                                                          \
@@ -29,7 +36,14 @@
     do {                                                                                                               \
       if(!($Expression))                                                                                               \
       {                                                                                                                \
-        clog_assert((__FILE__), (__func__), (__LINE__), (__clog_stringify($Expression)), (false), ##__VA_ARGS__);      \
+        clog_assert(                                                                                                   \
+          (__FILE__),                                                                                                  \
+          (__func__),                                                                                                  \
+          (__LINE__),                                                                                                  \
+          (__clog_stringify($Expression)),                                                                             \
+          (false),                                                                                                     \
+          __VA_OPT__(__VA_ARGS__, ) nullptr                                                                            \
+        );                                                                                                             \
         goto *(&&$Label);                                                                                              \
       }                                                                                                                \
     }                                                                                                                  \
@@ -83,3 +97,48 @@ clog_dump(
   uint64_t a_size,
   char *a_value
 );
+
+typedef enum clog_logger_level_e: int32_t
+{
+  k_TRACE = -2,
+  k_DEBUG = -1,
+  k_INFORMATION = 0,
+  k_WARNING = 1,
+  k_ERROR = 2,
+  k_FATAL = 3
+} clog_logger_level_t;
+
+#define CLOG_LOGGER_ID_CAPACITY 256
+#define CLOG_LOGGER_ID_SIZE 32
+
+typedef struct clog_logger_s
+{
+  char m_id[CLOG_LOGGER_ID_CAPACITY];
+  clog_logger_level_t m_level;
+} clog_logger_t;
+
+void
+clog_logger_new(
+  clog_logger_t **a_logger_out,
+  const char a_id[CLOG_LOGGER_ID_SIZE],
+  clog_logger_level_t a_level
+);
+
+void
+clog_logger_log(
+  clog_logger_t *a_logger,
+  clog_logger_level_t a_level,
+  const char *a_format,
+  ...
+);
+
+void
+clog_logger_log_extended(
+  clog_logger_t *a_logger,
+  clog_logger_level_t a_level,
+  const char *a_format,
+  va_list a_args
+);
+
+void
+clog_logger_free(clog_logger_t **a_logger);
